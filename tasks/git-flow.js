@@ -1,25 +1,40 @@
 module.exports = function(grunt) {
 	"use strict";
 
-	var cp = require("child_process")
-		, semver = require("semver")
-		, Q = require("q");
+	var cp = require("child_process"),
+		semver = require("semver"),
+		Q = require("q");
 
+	/**
+	 * Execute the given command
+	 * @param  {string} command
+	 * @param  {array} args
+	 * @return {promise}
+	 */
 	function exec(command, args) {
 		grunt.log.ok([command, args.join(" ")].join(" "));
 
-		var child = cp.spawn(command, args, { env: process.env, stdio: "inherit" });
-		var deferred = Q.defer();
+		var spawnConfig = { env: process.env, stdio: "inherit" },
+			child = cp.spawn(command, args, spawnConfig),
+			deferred = Q.defer();
 
-		child.on("exit", function(code) {
-			var success = (code === 0);
-			var callback = success ? deferred.resolve : deferred.reject;
-			callback(success, code);
-		});
+		function updatePromise(code) {
+			if(code === 0) deferred.resolve(code);
+			else deferred.reject(code);
+		}
 
+		child.on("exit", updatePromise);
 		return deferred.promise;
 	}
 
+	/**
+	 * Execute a git-flow command
+	 * @param  {string}   command
+	 * @param  {Function} done
+	 * @param  {array}  [args]
+	 * @param  {array}  [flags]
+	 * @return {promise}
+	 */
 	function flow(command, done, args, flags) {
 		args = args || [];
 		flags = flags || [];
