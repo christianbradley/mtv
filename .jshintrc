@@ -8,7 +8,8 @@
 		"beforeEach": true,
 		"afterEach": true,
 		"__dirname": true,
-		"setImmediate": true
+		"setImmediate": true,
+		"process": true
 	},
 	"bitwise": false,
 	"camelcase": true,
@@ -44,7 +45,7 @@
 	"iterator": false,
 	"lastsemic": false,
 	"laxbreak": false,
-	"laxcomma": true,
+	"laxcomma": false,
 	"loopfunc": false,
 	"moz": false,
 	"multistr": false,
